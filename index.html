@@ -337,7 +337,6 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .hero::before, .scroll i::after { animation: none; }
-    .hero-video { display: none; }
     * { transition: none !important; }
   }
 
@@ -441,7 +440,7 @@
 <main id="top">
 
   <div class="hero" id="hero">
-    <video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+    <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true" tabindex="-1">
       <source src="1794682120601730.MP4" type="video/mp4">
     </video>
     <div class="copy">
@@ -450,7 +449,7 @@
       <p class="lede">It's never too late to start.</p>
       <div class="cta">
         <a class="btn gold big pulse" href="#request" data-pick="trial">Request a trial lesson</a>
-        <a class="btn line big" href="https://ballroomtoronto.github.io/payments/">Pay for a lesson</a>
+        <a class="btn line big" href="https://ballroomtoronto.github.io/payments/" target="_blank" rel="noopener noreferrer">Pay for a lesson</a>
         <a class="btn line big" href="#prices">See prices</a>
       </div>
     </div>
@@ -828,6 +827,28 @@
       });
     }, {threshold:.12, rootMargin:'0px 0px -6% 0px'});
     targets.forEach(el => observer.observe(el));
+  })();
+</script>
+
+<script>
+  (() => {
+    const video = document.querySelector('.hero-video');
+    if (!video) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    const startVideo = () => {
+      const playback = video.play();
+      if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startVideo, { once: true });
+    } else {
+      startVideo();
+    }
+    video.addEventListener('canplay', startVideo, { once: true });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && video.paused) startVideo();
+    });
   })();
 </script>
 
